@@ -1,47 +1,47 @@
 # db-sync
 
-Script de bash para copiar una base de datos PostgreSQL de un servidor a otro (dump + restore completo).
+Bash script to copy a PostgreSQL database from one server to another (full dump + restore).
 
-## Requisitos
+## Requirements
 
-- `pg_dump` y `pg_restore` instalados y en el `$PATH`
-- Acceso de lectura a la base de datos origen
-- Acceso de escritura a la base de datos destino
+- `pg_dump` and `pg_restore` installed and in your `$PATH`
+- Read access to the source database
+- Write access to the target database
 
-## Uso
+## Usage
 
 ```bash
 ./db-sync.sh <source_connection> <target_connection>
 ```
 
-### Ejemplos
+### Examples
 
 ```bash
-# Sincronizar producción → staging
+# Sync production → staging
 ./db-sync.sh \
   "postgresql://user:pass@prod-host:5432/mydb" \
   "postgresql://user:pass@staging-host:5432/mydb"
 
-# Usando variables de entorno
+# Using environment variables
 ./db-sync.sh "$DATABASE_URL_PROD" "$DATABASE_URL_STAGING"
 ```
 
-## Comportamiento
+## How it works
 
-1. Exporta la base de datos origen con `pg_dump` (formato custom, sin owners ni privilegios)
-2. Borra y recrea el esquema `public` en el destino
-3. Restaura el dump en el destino
+1. Exports the source database with `pg_dump` (custom format, no owners or privileges)
+2. Drops and recreates the `public` schema on the target
+3. Restores the dump into the target
 
-> **Advertencia:** el destino queda completamente reemplazado. Todos los datos existentes se pierden.
+> **Warning:** the target database is completely replaced. All existing data will be lost.
 
-## Instalación global (opcional)
+## Global install (optional)
 
 ```bash
 chmod +x db-sync.sh
 sudo cp db-sync.sh /usr/local/bin/db-sync
 ```
 
-Luego puedes usarlo desde cualquier lugar:
+Then use it from anywhere:
 
 ```bash
 db-sync "$SOURCE" "$TARGET"
